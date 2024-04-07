@@ -42,4 +42,8 @@ export class UserService {
   async deleteUser(userId: string) {
     return await this.userRepository.deleteUser(userId);
   }
+
+  async verifyToken(tokenValue:string){
+    
+  }
 }

@@ -3,8 +3,8 @@ import { UserService } from "../service/userService";
 import StatusCodes from "../utils/const/statusCode";
 import { sendVerificationEmail } from "../utils/userEmailConfig";
 import { generateEmailVerificationToken } from "../utils/randomToken";
-import {saveToken} from '../service/tokenService';
-import { generateToken } from '../utils/jwt'
+import { saveToken } from "../service/tokenService";
+import { generateToken } from "../utils/generateJWTtoken";
 import {
   Query,
   Route,
@@ -87,20 +87,25 @@ export class UserController {
 
       // Generate verification token
       const token = generateEmailVerificationToken(user._id); // Assuming user._id is the MongoDB ObjectId
+      const newTime = new Date();
+
+      newTime.setMinutes(newTime.getMinutes() + 1);
 
       // Save token
-      await saveToken(user._id, token);
+      await saveToken(user._id, token ,newTime);
 
       // Generate verification link
-      const verificationLink = `http://localhost:3000/user/verify?token=${token}`;
+      const verificationLink = `http://localhost:5000/user/verify?token=${token}`;
 
       // Send verification email
       await sendVerificationEmail(user.email, verificationLink);
 
+
+
+
       return {
         status: "success",
-        message: "User created successfully. Verification email sent.",
-        data: user,
+        message: "User created successfully. Verification email sent.", 
       };
     } catch (err: any) {
       throw new Error(err.message);
@@ -160,6 +165,8 @@ export class UserController {
       if (!user) {
         throw new Error("User not found");
       }
+
+
       user.isVerified = true;
       await user.save();
 
