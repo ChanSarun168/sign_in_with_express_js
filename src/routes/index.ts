@@ -1,7 +1,7 @@
 import express, { Request, Response } from "express";
 import { UserController } from "../controller/userController";
 import { validateUser } from "../middleware/userValidation";
-import { User } from "../database/models/user";
+import { IUser, User } from "../database/models/user";
 import { generateEmailVerificationToken } from "../utils/randomToken";
 import Token from "../database/models/userToken";
 import bcrypt from "bcrypt";
@@ -21,7 +21,7 @@ router.post("/login", async (req: Request, res: Response) => {
     const { email, password } = req.body;
 
     // Check if the user with the given email exists
-    const user = await User.findOne({ email });
+    const user: IUser | null = await User.findOne({ email });
 
     if (!user) {
       return res.status(400).json({ message: "Invalid email or password." });
@@ -176,7 +176,7 @@ router.post("/", async (req: Request, res: Response<any>) => {
     const existingUser = await User.findOne({ email });
 
     if (existingUser) {
-      return res.status(400).json({ message: "User already created." });
+      return res.status(400).json({ message: "Email already use , Please use another email" });
     }
 
     // Check if user with the given email exists but not verified

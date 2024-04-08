@@ -5,15 +5,17 @@ export interface IUser extends Document {
   email: string;
   password: string;
   isVerified: boolean;
-  // Add more fields as needed
+  googleId: string;
+ 
 }
 
 const userSchema: Schema = new Schema({
   username: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: { type: String},
   isVerified: { type: Boolean, default: false },
-  // Define more fields here
+  googleId: {type:String , unique:true}
+  
 });
 
 export const User = mongoose.model<IUser>("User", userSchema);
